@@ -61,6 +61,9 @@ class GameScene: SKScene {
       let location = touch.location(in: self)
       if let card = atPoint(location) as? Card {
         card.zPosition = CardLevel.moving.rawValue
+        
+        card.removeAction(forKey: "drop")
+        card.run(SKAction.scale(to: 1.3, duration: 0.25), withKey: "pickup")
       }
     }
   }
@@ -72,6 +75,9 @@ class GameScene: SKScene {
         card.zPosition = CardLevel.board.rawValue
         card.removeFromParent()
         addChild(card)
+        
+        card.removeAction(forKey: "pickup")
+        card.run(SKAction.scale(to: 1.0, duration: 0.25), withKey: "drop")
       }
     }
   }

@@ -22,6 +22,12 @@
 
 import SpriteKit
 
+enum CardLevel :CGFloat {
+  case board = 10
+  case moving = 100
+  case enlarged = 200
+}
+
 class GameScene: SKScene {
   
   override func didMove(to view: SKView) {
@@ -37,6 +43,37 @@ class GameScene: SKScene {
     let bear = Card(cardType: .bear)
     bear.position = CGPoint(x: 300, y: 200)
     addChild(bear)
+  }
+  
+  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    for touch in touches {
+      // The location(in:) method converts the touch location into the scene coordinates.
+      let location = touch.location(in: self)
+      // Use atPoint(_:) to determine which node was touched. This method will always return a value, even if you didn’t touch any of the cards. In that case, you get some other SKNode class. The as? Card keyword then either returns a Card object, or nil if that node isn’t a Card. The if let then guarantees that card contains an actual Card, and not anything else. Without this step, you might accidentally move the background node, which is amusing, but not what you want.
+      if let card = atPoint(location) as? Card {
+        card.position = location
+      }
+    }
+  }
+  
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    for touch in touches {
+      let location = touch.location(in: self)
+      if let card = atPoint(location) as? Card {
+        card.zPosition = CardLevel.moving.rawValue
+      }
+    }
+  }
+  
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    for touch in touches {
+      let location = touch.location(in: self)
+      if let card = atPoint(location) as? Card {
+        card.zPosition = CardLevel.board.rawValue
+        card.removeFromParent()
+        addChild(card)
+      }
+    }
   }
   
 }

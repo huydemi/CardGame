@@ -35,6 +35,8 @@ class Card : SKSpriteNode {
   var damage = 0
   let damageLabel :SKLabelNode
   var faceUp = true
+  var enlarged = false
+  var savedPosition = CGPoint.zero
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("NSCoding not supported")
@@ -86,6 +88,29 @@ class Card : SKSpriteNode {
       }
     }
     faceUp = !faceUp
+  }
+  
+  func enlarge() {
+    if enlarged {
+      enlarged = false
+      zPosition = CardLevel.board.rawValue
+      position = savedPosition
+      removeAllActions()
+      setScale(1.0)
+      zRotation = 0
+    } else {
+      enlarged = true
+      savedPosition = position
+      zPosition = CardLevel.enlarged.rawValue
+      
+      if let parent = parent {
+        position = CGPoint(x: parent.frame.midX, y: parent.frame.midY)
+      }
+      
+      removeAllActions()
+      setScale(5.0)
+      zRotation = 0
+    }
   }
   
 }

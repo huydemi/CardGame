@@ -51,6 +51,7 @@ class GameScene: SKScene {
       let location = touch.location(in: self)
       // Use atPoint(_:) to determine which node was touched. This method will always return a value, even if you didn’t touch any of the cards. In that case, you get some other SKNode class. The as? Card keyword then either returns a Card object, or nil if that node isn’t a Card. The if let then guarantees that card contains an actual Card, and not anything else. Without this step, you might accidentally move the background node, which is amusing, but not what you want.
       if let card = atPoint(location) as? Card {
+        if card.enlarged { return }
         card.position = location
       }
     }
@@ -61,8 +62,11 @@ class GameScene: SKScene {
       let location = touch.location(in: self)
       if let card = atPoint(location) as? Card {
         if touch.tapCount > 1 {
-          card.flip()
+          card.enlarge()
+          return
         }
+        
+        if card.enlarged { return }
         
         let wiggleIn = SKAction.scaleX(to: 1.0, duration: 0.2)
         let wiggleOut = SKAction.scaleX(to: 1.2, duration: 0.2)
@@ -82,6 +86,8 @@ class GameScene: SKScene {
     for touch in touches {
       let location = touch.location(in: self)
       if let card = atPoint(location) as? Card {
+        if card.enlarged { return }
+        
         card.zPosition = CardLevel.board.rawValue
         card.removeFromParent()
         addChild(card)

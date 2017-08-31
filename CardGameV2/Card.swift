@@ -37,6 +37,8 @@ class Card : SKSpriteNode {
   var faceUp = true
   var enlarged = false
   var savedPosition = CGPoint.zero
+  let largeTextureFilename :String
+  var largeTexture :SKTexture?
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("NSCoding not supported")
@@ -49,10 +51,13 @@ class Card : SKSpriteNode {
     switch cardType {
     case .wolf:
       frontTexture = SKTexture(imageNamed: "card_creature_wolf")
+      largeTextureFilename = "card_creature_wolf_large"
     case .bear:
       frontTexture = SKTexture(imageNamed: "card_creature_bear")
+      largeTextureFilename = "card_creature_bear_large"
     case .dragon:
       frontTexture = SKTexture(imageNamed: "card_creature_dragon")
+      largeTextureFilename = "card_creature_dragon_large"
     }
     
     damageLabel = SKLabelNode(fontNamed: "OpenSans-Bold")
@@ -92,24 +97,33 @@ class Card : SKSpriteNode {
   
   func enlarge() {
     if enlarged {
-      enlarged = false
-      zPosition = CardLevel.board.rawValue
-      position = savedPosition
-      removeAllActions()
-      setScale(1.0)
-      zRotation = 0
+      let slide = SKAction.move(to: savedPosition, duration:0.3)
+      let scaleDown = SKAction.scale(to: 1.0, duration:0.3)
+      run(SKAction.group([slide, scaleDown])) {
+        self.enlarged = false
+        self.zPosition = CardLevel.board.rawValue
+      }
     } else {
       enlarged = true
       savedPosition = position
+      
+      if largeTexture != nil {
+        texture = largeTexture
+      } else {
+        largeTexture = SKTexture(imageNamed: largeTextureFilename)
+        texture = largeTexture
+      }
+      
       zPosition = CardLevel.enlarged.rawValue
       
       if let parent = parent {
-        position = CGPoint(x: parent.frame.midX, y: parent.frame.midY)
+        removeAllActions()
+        zRotation = 0
+        let newPosition = CGPoint(x: parent.frame.midX, y: parent.frame.midY)
+        let slide = SKAction.move(to: newPosition, duration:0.3)
+        let scaleUp = SKAction.scale(to: 5.0, duration:0.3)
+        run(SKAction.group([slide, scaleUp]))
       }
-      
-      removeAllActions()
-      setScale(5.0)
-      zRotation = 0
     }
   }
   

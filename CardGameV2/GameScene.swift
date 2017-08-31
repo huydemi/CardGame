@@ -43,6 +43,10 @@ class GameScene: SKScene {
     let bear = Card(cardType: .bear)
     bear.position = CGPoint(x: 300, y: 200)
     addChild(bear)
+    
+    let dragon = Card(cardType: .dragon)
+    dragon.position = CGPoint(x: 500, y: 200)
+    addChild(dragon)
   }
   
   override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

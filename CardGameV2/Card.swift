@@ -39,6 +39,7 @@ class Card : SKSpriteNode {
   var savedPosition = CGPoint.zero
   let largeTextureFilename :String
   var largeTexture :SKTexture?
+  var sound: String
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("NSCoding not supported")
@@ -52,12 +53,15 @@ class Card : SKSpriteNode {
     case .wolf:
       frontTexture = SKTexture(imageNamed: "card_creature_wolf")
       largeTextureFilename = "card_creature_wolf_large"
+      sound = "wolf_howl.wav"
     case .bear:
       frontTexture = SKTexture(imageNamed: "card_creature_bear")
       largeTextureFilename = "card_creature_bear_large"
+      sound = "bear_growl.wav"
     case .dragon:
       frontTexture = SKTexture(imageNamed: "card_creature_dragon")
       largeTextureFilename = "card_creature_dragon_large"
+      sound = "dragon-roar.wav"
     }
     
     damageLabel = SKLabelNode(fontNamed: "OpenSans-Bold")
@@ -122,6 +126,9 @@ class Card : SKSpriteNode {
         let newPosition = CGPoint(x: parent.frame.midX, y: parent.frame.midY)
         let slide = SKAction.move(to: newPosition, duration:0.3)
         let scaleUp = SKAction.scale(to: 5.0, duration:0.3)
+        
+        
+        run(SKAction.playSoundFileNamed(sound, waitForCompletion: false))
         run(SKAction.group([slide, scaleUp]))
       }
     }
